@@ -1,5 +1,5 @@
 import express from "express"
-import router from "./routes/searchJob"
+import router from "./routes/jobSearch"
 import "dotenv/config"
 
 const app = express()
