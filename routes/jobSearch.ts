@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Router } from "express";
 import { JobDetails } from "../types/ISearchJob";
 import {format} from "date-fns"
+import convertUserInputToBoolean from "../utils/convertUserInputToBoolean";
 
 const router = Router()
 
@@ -11,13 +12,16 @@ router.get("/", async (request: Request, response: Response)=>{
     
     const job = request.body.job
     const num_pages = request.body.num_pages
+    const is_remote_only = request.body.is_remote
+
+    const convert = convertUserInputToBoolean(is_remote_only)
 
     if(!job){
         return response.json({error: "Insira a aréa que deseja ver vagas disponiveis"})
     }
 
     try {
-        const req = await fetch(`${api_host}/search?query=${job}&page=1&num_pages=${!num_pages ? "1" : num_pages > 10 ? "10" : num_pages}&date_posted=all`, {
+        const req = await fetch(`${api_host}/search?query=${job}&page=1&num_pages=${!num_pages ? "1" : num_pages > 10 ? "10" : num_pages}&${!is_remote_only ? "" : convert ? "remote_jobs_only=true&" : ""}date_posted=all`, {
             headers: {
                 "x-rapidapi-key": api_key!
             }
@@ -37,7 +41,6 @@ router.get("/", async (request: Request, response: Response)=>{
             job_required_education: {postgraduate_degree, professional_certification, high_school}}: JobDetails
         ) => {
                 const formattedDate = format(job_posted_at_datetime_utc, 'dd/MM/yyyy HH:mm:ss');
-                console.log(jobsDetails.length);
 
                 return {
                     employer_name,
