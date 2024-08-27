@@ -1,12 +1,7 @@
-export default function convertUserInputToBoolean (input: string) {
+export default function convertUserInputToBoolean (input: string | null | undefined): boolean {
+    const normalizedInput = (input || "").trim().toLowerCase();
 
-    const normalizedInput = input.trim().toLowerCase()
+    const trueValues = new Set(["yes", "sim", "y", "remote", "r", "true"]);
 
-    const trueValues = ["yes", "sim", "y", "remote", "r", "true"]
-
-    if(trueValues.includes(normalizedInput)){
-        return true
-    }
-
-    return false
+    return trueValues.has(normalizedInput);
 }
